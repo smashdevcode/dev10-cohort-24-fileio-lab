@@ -1,9 +1,6 @@
 package learn.fileio;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,25 +12,45 @@ public class App {
         List<String> lines = getTextFromFile("./data/README.txt");
 
         for (String line : lines) {
+            if (line.startsWith("CREATE")) {
+                processCreateCommand(line);
+            } else if (line.startsWith("APPEND")) {
+                processAppendCommand(line);
+            } else if (line.startsWith("DELETE")) {
 
+            } else if (line.startsWith("COPY")) {
 
-            // TODO only print the lines that are commands
-
-            // CREATE
-            // APPEND
-            // DELETE
-            // COPY
-
-            System.out.println(line);
-
-
+            }
         }
+    }
 
+    private static void processCreateCommand(String line) {
+        String[] parts = line.split(" ");
+        String fileName = parts[1];
 
+        File file = new File("data/" + fileName);
+        try {
+            // TODO do we need to do something if the file already exists?
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private static void processAppendCommand(String line) {
+        String[] parts = line.split(" ");
+        String fileName = parts[1];
 
-
-
+        try (FileWriter fileWriter = new FileWriter("data/" + fileName, true);
+            PrintWriter writer = new PrintWriter(fileWriter)) {
+            // HACK... sigh... this kind of sucks
+            for (int i = 2; i < parts.length; i++) {
+                writer.print(parts[i] + " ");
+            }
+            writer.println();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // TODO consider moving this method to its own class
