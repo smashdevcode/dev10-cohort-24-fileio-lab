@@ -37,17 +37,32 @@ public class App {
         }
     }
 
+//    private static void processAppendCommand(String line) {
+//        String[] parts = line.split(" ");
+//        String fileName = parts[1];
+//
+//        try (FileWriter fileWriter = new FileWriter("data/" + fileName, true);
+//            PrintWriter writer = new PrintWriter(fileWriter)) {
+//            // HACK... sigh... this kind of sucks
+//            for (int i = 2; i < parts.length; i++) {
+//                writer.print(parts[i] + " ");
+//            }
+//            writer.println();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    
     private static void processAppendCommand(String line) {
-        String[] parts = line.split(" ");
-        String fileName = parts[1];
+        int firstSpaceIndex = line.indexOf(" ");
+        int secondSpaceIndex = line.indexOf(" ", firstSpaceIndex + 1);
+
+        String fileName = line.substring(firstSpaceIndex + 1, secondSpaceIndex);
+        String value = line.substring(secondSpaceIndex + 1);
 
         try (FileWriter fileWriter = new FileWriter("data/" + fileName, true);
-            PrintWriter writer = new PrintWriter(fileWriter)) {
-            // HACK... sigh... this kind of sucks
-            for (int i = 2; i < parts.length; i++) {
-                writer.print(parts[i] + " ");
-            }
-            writer.println();
+             PrintWriter writer = new PrintWriter(fileWriter)) {
+            writer.println(value);
         } catch (IOException e) {
             e.printStackTrace();
         }
