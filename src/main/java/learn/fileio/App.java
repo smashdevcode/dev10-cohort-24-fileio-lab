@@ -4,19 +4,44 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
     public static void main(String[] args) {
 
 
 
+        List<String> lines = getTextFromFile("./data/README.txt");
 
-        // TODO open and read the contents of the README.txt file
-
-        // TODO print each line to the console
+        for (String line : lines) {
 
 
-        try (FileReader fileReader = new FileReader("./data/README.txt");
+            // TODO only print the lines that are commands
+
+            // CREATE
+            // APPEND
+            // DELETE
+            // COPY
+
+            System.out.println(line);
+
+
+        }
+
+
+
+
+
+
+    }
+
+    // TODO consider moving this method to its own class
+
+    private static List<String> getTextFromFile(String fileName) {
+        List<String> lines = new ArrayList<>();
+
+        try (FileReader fileReader = new FileReader(fileName);
              BufferedReader reader = new BufferedReader(fileReader)) {
 
             // FileReader - is doing the work of reading the file from the operating system's file system
@@ -24,14 +49,13 @@ public class App {
             // for getting data from the file reader
 
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                System.out.println(line);
+                lines.add(line);
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
-        System.out.println("Hello world!");
+        return lines;
     }
 }
