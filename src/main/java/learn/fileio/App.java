@@ -1,14 +1,15 @@
 package learn.fileio;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
 public class App {
     public static void main(String[] args) {
-
-
-
         List<String> lines = getTextFromFile("./data/README.txt");
 
         for (String line : lines) {
@@ -17,9 +18,9 @@ public class App {
             } else if (line.startsWith("APPEND")) {
                 processAppendCommand(line);
             } else if (line.startsWith("DELETE")) {
-
+                processDeleteCommand(line);
             } else if (line.startsWith("COPY")) {
-
+                processCopyCommand(line);
             }
         }
     }
@@ -28,9 +29,10 @@ public class App {
         String[] parts = line.split(" ");
         String fileName = parts[1];
 
-        File file = new File("data/" + fileName);
+        File file = new File("temp/" + fileName);
         try {
             // TODO do we need to do something if the file already exists?
+            file.mkdirs();
             file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,7 +54,7 @@ public class App {
 //            e.printStackTrace();
 //        }
 //    }
-    
+
     private static void processAppendCommand(String line) {
         int firstSpaceIndex = line.indexOf(" ");
         int secondSpaceIndex = line.indexOf(" ", firstSpaceIndex + 1);
@@ -63,6 +65,36 @@ public class App {
         try (FileWriter fileWriter = new FileWriter("data/" + fileName, true);
              PrintWriter writer = new PrintWriter(fileWriter)) {
             writer.println(value);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void processDeleteCommand(String line) {
+        String[] parts = line.split(" ");
+        String fileName = parts[1];
+
+        File file = new File("data/" + fileName);
+        file.delete();
+    }
+
+    private static void processCopyCommand(String line) {
+        String[] parts = line.split(" ");
+        String sourceFileName = parts[1];
+        String destinationFileName = parts[2];
+
+        Path sourcePath = Paths.get("data/" + sourceFileName);
+        Path destinationPath = Paths.get("data/" + destinationFileName);
+
+        try {
+            // create the directory for the destination file
+            Files.createDirectories(destinationPath.getParent());
+
+            // get the contents of the source file
+            String content = Files.readString(sourcePath);
+
+            // write the destination file contents
+            Files.writeString(destinationPath, content, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
             e.printStackTrace();
         }
